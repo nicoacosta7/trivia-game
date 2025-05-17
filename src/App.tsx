@@ -5,13 +5,15 @@ import BattleMode from "./pages/BattleMode.tsx";
 
 function App() {
     const questionCount = 10;
-    const timePerQuestion = 15;
+    const timePerQuestionClassic = 15;
+    const timePerQuestionBattle = 15;
+    const questionCountPerPlayer = 5;
 
   return (
     <Routes>
       <Route path="/" element={<Home />} />
-      <Route path="/classic" element={<ClassicMode questionCount={questionCount} timePerQuestion={timePerQuestion} />} />
-      <Route path="/battle" element={<BattleMode />} />
+      <Route path="/classic" element={<ClassicMode questionCount={questionCount} timePerQuestion={timePerQuestionClassic} />} />
+      <Route path="/battle" element={<BattleMode questionCount={questionCountPerPlayer} timePerQuestion={timePerQuestionBattle} />} />
     </Routes>
   );
 }

@@ -8,3 +8,8 @@ export function transformQuestions(response: QuestionResponse[]): Question[] {
         correctAnswer: q.correct_answer,
     }));
 }
+
+export function getRandomQuestions(questions: Question[], count: number): Question[] {
+    const shuffled = [...questions].sort(() => Math.random() - 0.5);
+    return shuffled.slice(0, count);
+}

@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import type { ClassicModeProps, Question } from "../types/gameTypes";
-import { transformQuestions } from "../utils/utils";
+import { getRandomQuestions, transformQuestions } from "../utils/utils";
 import { questionsData } from "../data";
 import QuestionCard from "../components/QuestionCard";
 import Button from "../components/Button";
-
 
 function ClassicMode({ questionCount, timePerQuestion }: ClassicModeProps) {
     const [questions, setQuestions] = useState<Question[]>([]);
@@ -15,13 +14,27 @@ function ClassicMode({ questionCount, timePerQuestion }: ClassicModeProps) {
     const [currentScore, setCurrentScore] = useState<number>(0);
     const [isGameOver, setIsGameOver] = useState<boolean>(false);
     const [isFinished, setIsFinished] = useState<boolean>(false);
+    const [playerName, setPlayerName] = useState<string>("");
+    const [nameSubmitted, setNameSubmitted] = useState<boolean>(false);
+    const [countdown, setCountdown] = useState<number | null>(null);
 
     useEffect(() => {
         fetchQuestions();
     }, []);
 
     useEffect(() => {
-        if (!loading && timer > 0) {
+        if (countdown !== null) {
+            if (countdown > 0) {
+                const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+                return () => clearTimeout(timer);
+            } else {
+                setCountdown(null);
+            }
+        }
+    }, [countdown]);
+
+    useEffect(() => {
+        if (!loading && timer > 0 && countdown === null) {
             const interval = setInterval(() => setTimer((t) => t - 1), 1000);
             return () => clearInterval(interval);
         }
@@ -29,8 +42,7 @@ function ClassicMode({ questionCount, timePerQuestion }: ClassicModeProps) {
         if (timer === 0 && selectedAnswer === null && !isGameOver) {
             setIsGameOver(true);
         }
-    }, [timer, loading]);
-
+    }, [timer, loading, countdown]);
 
     useEffect(() => {
         setTimer(timePerQuestion);
@@ -44,41 +56,26 @@ function ClassicMode({ questionCount, timePerQuestion }: ClassicModeProps) {
         setLoading(false);
     }
 
-    function getRandomQuestions(questions: Question[], count: number): Question[] {
-        const shuffled = [...questions].sort(() => Math.random() - 0.5);
-        return shuffled.slice(0, count);
-    }
-
     function handleAnswer(answer: string) {
         setSelectedAnswer(answer);
         validateAnswer(answer);
         setTimeout(() => {
             handleNext();
-        }, 1000)
+        }, 1000);
     }
 
     function increaseScore() {
-        setCurrentScore((prevScore) => {
-            const newScore = prevScore + 1;
-            console.log("currentScore", newScore);
-            return newScore;
-        });
+        setCurrentScore((prevScore) => prevScore + 1);
     }
 
-
     function decreaseScore() {
-        setCurrentScore((prevScore) => {
-            const newScore = prevScore - 1;
-            return newScore;
-        });
+        setCurrentScore((prevScore) => prevScore - 1);
     }
 
     function validateAnswer(answer: string) {
         if (answer === questions[currentIndex].correctAnswer) {
-            console.log("correct answer");
             increaseScore();
         } else {
-            console.log("bad answer");
             decreaseScore();
         }
     }
@@ -100,8 +97,43 @@ function ClassicMode({ questionCount, timePerQuestion }: ClassicModeProps) {
         setCurrentScore(0);
         setIsGameOver(false);
         setIsFinished(false);
-
+        setCountdown(3);
         fetchQuestions();
+    }
+
+    // Mostrar campo de nombre
+    if (!nameSubmitted) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white px-4">
+                <h1 className="text-3xl font-bold mb-6">Ingrese su nombre para comenzar</h1>
+                <input
+                    type="text"
+                    placeholder="Tu nombre..."
+                    className="p-3 rounded-md text-black w-64 mb-4 text-lg"
+                    value={playerName}
+                    onChange={(e) => setPlayerName(e.target.value)}
+                />
+                <button
+                    onClick={() => {
+                        if (playerName.trim() !== "") {
+                            setNameSubmitted(true);
+                            setCountdown(3);
+                        }
+                    }}
+                    className="bg-blue-600 px-6 py-3 rounded-lg hover:bg-blue-700 transition"
+                >
+                    Comenzar
+                </button>
+            </div>
+        );
+    }
+
+    if (countdown !== null) {
+        return (
+            <div className="flex items-center justify-center min-h-screen bg-gray-900 text-white">
+                <h1 className="text-9xl font-extrabold animate-bounce">{countdown}</h1>
+            </div>
+        );
     }
 
     if (loading) {
@@ -118,7 +150,8 @@ function ClassicMode({ questionCount, timePerQuestion }: ClassicModeProps) {
             <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white text-center px-4">
                 <h2 className="text-4xl font-bold mb-4">🎉 Juego terminado</h2>
                 <p className="text-2xl mb-2">
-                    Puntaje final: <span className="font-semibold text-green-400">{currentScore}</span>
+                    {playerName}, tu puntaje final es:{" "}
+                    <span className="font-semibold text-green-400">{currentScore}</span>
                 </p>
                 <div className="mt-6 flex flex-col gap-2">
                     <Button text="Volver al inicio" to="/" />
@@ -149,7 +182,6 @@ function ClassicMode({ questionCount, timePerQuestion }: ClassicModeProps) {
                     >
                         Reiniciar juego
                     </button>
-
                 </div>
             </div>
         );
@@ -162,9 +194,12 @@ function ClassicMode({ questionCount, timePerQuestion }: ClassicModeProps) {
                 onAnswer={handleAnswer}
                 selected={selectedAnswer ?? ""}
                 timer={timer}
-                currentScore={currentScore}
+                currentScoreP1={currentScore}
+                currentScoreP2={null}
                 currentIndex={currentIndex}
                 totalQuestions={questions.length}
+                player1={playerName}
+                player2={null}
             />
         </div>
     );

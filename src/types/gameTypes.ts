@@ -17,3 +17,8 @@ export interface ClassicModeProps {
     questionCount: number;
     timePerQuestion: number;
 }
+
+export interface BattleModeProps {
+    questionCount: number;
+    timePerQuestion: number;
+}
