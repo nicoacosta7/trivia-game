@@ -17,7 +17,7 @@ Este es un juego interactivo de preguntas y respuestas desarrollado con **React*
 ## 🏁 Fin del juego
 
 - Si el tiempo se agota, se mostrará un mensaje de **Game Over**.
-- En modo Versus, si se acaba el tiempo, **gana el otro jugador automáticamente**.
+- En modo Batalla, si se acaba el tiempo, **gana el otro jugador automáticamente**.
 - Si un jugador supera su mejor puntaje histórico, ¡aparecen confetis de celebración! 🎉
 
 ## 🚀 Funcionalidades
@@ -37,6 +37,19 @@ Este es un juego interactivo de preguntas y respuestas desarrollado con **React*
 
 ## ▶️ Cómo ejecutar el proyecto
 
-```bash
 npm install
 npm run dev
+
+## Decisiones Tomadas
+
+- Decidí tener una separación clara de componentes: se modularizó la UI en componentes reutilizables (Button, LoadingScreen, EndGameScreen, etc.) para mantener el código limpio y escalable
+
+- Se utiliza localStorage para guardar el mejor puntaje del usuario, incluso si recarga o reinicia el juego
+
+- El modo Batalla se diseñó con soporte opcional para player2, permitiendo que el juego funcione en modo clásico o multijugador sin duplicar lógica
+
+- Se priorizó una UX clara para cada etapa del juego: inicio, juego activo, fin del juego y reinicio
+
+- El confetti aparece solo si se supera un récord anterior, para no abusar del efecto visual
+
+- En caso de que se termine el tiempo, el otro jugador gana automáticamente si está en modo Versus, para mantener la lógica competitiva
