@@ -5,6 +5,8 @@ import { questionsData } from "../data";
 import Button from "../components/Button";
 import QuestionCard from "../components/QuestionCard";
 import EndGameScreen from "../components/EndGame";
+import Loader from "../components/Loader";
+import CountDown from "../components/CountDown";
 
 function BattleMode({ questionCount, timePerQuestion }: BattleModeProps) {
     const [questions, setQuestions] = useState<Question[]>([]);
@@ -150,20 +152,12 @@ function BattleMode({ questionCount, timePerQuestion }: BattleModeProps) {
     }
 
     if (gameStarted && countdown > 0) {
-        return (
-            <div className="flex items-center justify-center min-h-screen bg-gray-900 text-white">
-                <h1 className="text-9xl font-extrabold animate-bounce">{countdown}</h1>
-            </div>
-        );
+        return <CountDown countdown={countdown.toString()} />;
+
     }
 
     if (loading) {
-        return (
-            <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-500 border-solid mb-4"></div>
-                <p className="text-xl">Cargando preguntas...</p>
-            </div>
-        );
+        return <Loader message="Cargando preguntas..." />;
     }
 
     if (isFinished || isGameOver) {

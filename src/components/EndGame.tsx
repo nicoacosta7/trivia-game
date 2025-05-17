@@ -37,7 +37,7 @@ const EndGameScreen = ({
                     : currentScoreP1 > currentScoreP2!
                         ? player1
                         : player2
-            : player1; // Modo clásico
+            : player1;
 
 
     useEffect(() => {

@@ -5,6 +5,8 @@ import { questionsData } from "../data";
 import QuestionCard from "../components/QuestionCard";
 import Button from "../components/Button";
 import EndGameScreen from "../components/EndGame";
+import Loader from "../components/Loader";
+import CountDown from "../components/CountDown";
 
 function ClassicMode({ questionCount, timePerQuestion }: ClassicModeProps) {
     const [questions, setQuestions] = useState<Question[]>([]);
@@ -102,7 +104,6 @@ function ClassicMode({ questionCount, timePerQuestion }: ClassicModeProps) {
         fetchQuestions();
     }
 
-    // Mostrar campo de nombre
     if (!nameSubmitted) {
         return (
             <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white px-4">
@@ -130,20 +131,11 @@ function ClassicMode({ questionCount, timePerQuestion }: ClassicModeProps) {
     }
 
     if (countdown !== null) {
-        return (
-            <div className="flex items-center justify-center min-h-screen bg-gray-900 text-white">
-                <h1 className="text-9xl font-extrabold animate-bounce">{countdown}</h1>
-            </div>
-        );
+        return <CountDown countdown={countdown.toString()} />;
     }
 
     if (loading) {
-        return (
-            <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-500 border-solid mb-4"></div>
-                <p className="text-xl">Cargando preguntas...</p>
-            </div>
-        );
+        return <Loader message="Cargando preguntas..." />;
     }
 
     if (isFinished || isGameOver) {

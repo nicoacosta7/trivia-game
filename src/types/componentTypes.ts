@@ -23,6 +23,14 @@ interface AnswerListProps {
     selected: string | null;
     correctAnswer: string;
     onAnswer: (answer: string) => void;
-  }
+}
 
-export type { ButtonProps, QuestionCardProps, AnswerListProps };
+interface LoaderProps {
+    message: string;
+}
+
+interface CountDownProps {
+    countdown: string;
+}
+
+export type { ButtonProps, QuestionCardProps, AnswerListProps, LoaderProps, CountDownProps };
