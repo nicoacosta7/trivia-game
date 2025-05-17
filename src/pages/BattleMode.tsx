@@ -4,6 +4,7 @@ import { getRandomQuestions, transformQuestions } from "../utils/utils";
 import { questionsData } from "../data";
 import Button from "../components/Button";
 import QuestionCard from "../components/QuestionCard";
+import EndGameScreen from "../components/EndGame";
 
 function BattleMode({ questionCount, timePerQuestion }: BattleModeProps) {
     const [questions, setQuestions] = useState<Question[]>([]);
@@ -165,49 +166,17 @@ function BattleMode({ questionCount, timePerQuestion }: BattleModeProps) {
         );
     }
 
-    if (isFinished) {
+    if (isFinished || isGameOver) {
         return (
-            <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white text-center px-4">
-                <h2 className="text-4xl font-bold mb-4">🎉 Juego terminado</h2>
-                <p className="text-2xl mb-2">
-                    Puntaje final {player1}: <span className="font-semibold text-green-400">{currentScoreP1}</span>
-                </p>
-                <p className="text-2xl mb-2">
-                    Puntaje final {player2}: <span className="font-semibold text-green-400">{currentScoreP2}</span>
-                </p>
-                <div className="mt-6 flex flex-col gap-2">
-                    <Button text="Volver al inicio" to="/" />
-                    <button
-                        onClick={restartGame}
-                        className="w-full block px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-xl shadow-md hover:scale-105 transform transition duration-300 ease-in-out text-center"
-                    >
-                        Reiniciar juego
-                    </button>
-                </div>
-            </div>
-        );
-    }
-
-    if (isGameOver) {
-        return (
-            <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white text-center px-4">
-                <h2 className="text-4xl font-bold mb-2 text-red-500">⏱️ ¡Game Over!</h2>
-                <p className="text-2xl">Se te terminó el tiempo</p>
-                <p className="text-xl mt-4 mb-2">
-                    Puntaje final {player1}: <span className="font-semibold text-yellow-400">{currentScoreP1}</span>
-                    {" / "}
-                    {player2}: <span className="font-semibold text-yellow-400">{currentScoreP2}</span>
-                </p>
-                <div className="mt-6 flex flex-col gap-2">
-                    <Button text="Volver al inicio" to="/" />
-                    <button
-                        onClick={restartGame}
-                        className="w-full block px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-xl shadow-md hover:scale-105 transform transition duration-300 ease-in-out text-center"
-                    >
-                        Reiniciar juego
-                    </button>
-                </div>
-            </div>
+            <EndGameScreen
+                isFinished={isFinished}
+                isGameOver={isGameOver}
+                player1={player1}
+                player2={player2}
+                currentScoreP1={currentScoreP1}
+                currentScoreP2={currentScoreP2}
+                restartGame={restartGame}
+            />
         );
     }
 

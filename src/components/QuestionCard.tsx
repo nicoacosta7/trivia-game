@@ -54,10 +54,10 @@ const QuestionCard = ({
                     <p className="text-lg font-semibold text-blue-800">{player1}</p>
                     <p className="text-4xl font-extrabold text-blue-900">{currentScoreP1}</p>
                 </div>
-                <div className="bg-red-100 bg-opacity-50 rounded-xl px-6 py-4 w-1/2 shadow-md">
+                { player2 && <div className="bg-red-100 bg-opacity-50 rounded-xl px-6 py-4 w-1/2 shadow-md">
                     <p className="text-lg font-semibold text-red-800">{player2}</p>
                     <p className="text-4xl font-extrabold text-red-900">{currentScoreP2}</p>
-                </div>
+                </div>}
             </div>
         </div>
     </div>
