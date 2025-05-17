@@ -37,8 +37,10 @@ Este es un juego interactivo de preguntas y respuestas desarrollado con **React*
 
 ## ▶️ Cómo ejecutar el proyecto
 
+```bash
 npm install
 npm run dev
+```
 
 ## Decisiones Tomadas
 
