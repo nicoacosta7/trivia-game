@@ -5,7 +5,7 @@ function Button({ text, to }: ButtonProps) {
     return (
         <Link
             to={to}
-            className="inline-block px-6 py-3 bg-blue-600 text-white text-center rounded hover:bg-blue-700 transition"
+            className="w-full block px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-xl shadow-md hover:scale-105 transform transition duration-300 ease-in-out text-center"
         >
             {text}
         </Link>
