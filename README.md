@@ -37,6 +37,8 @@ Este es un juego interactivo de preguntas y respuestas desarrollado con **React*
 
 ## ▶️ Cómo ejecutar el proyecto
 
+Editar .env con la url para obtener las preguntas
+
 ```bash
 npm install
 npm run dev
