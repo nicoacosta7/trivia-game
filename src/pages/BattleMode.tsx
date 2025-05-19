@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import type { BattleModeProps, Question } from "../types/gameTypes";
 import { getRandomQuestions, transformQuestions } from "../utils/utils";
-import { questionsData } from "../data";
 import Button from "../components/Button";
 import QuestionCard from "../components/QuestionCard";
 import EndGameScreen from "../components/EndGame";
@@ -26,20 +25,20 @@ function BattleMode({ questionCount, timePerQuestion }: BattleModeProps) {
     const [countdown, setCountdown] = useState<number>(3);
 
     useEffect(() => {
+        fetchQuestions();
+    }, []);
+
+    useEffect(() => {
         if (gameStarted && countdown > 0) {
             const countdownTimer = setInterval(() => {
                 setCountdown((prev) => prev - 1);
             }, 1000);
             return () => clearInterval(countdownTimer);
         }
-
-        if (gameStarted && countdown === 0) {
-            fetchQuestions();
-        }
     }, [gameStarted, countdown]);
 
     useEffect(() => {
-        if (!loading && timer > 0) {
+        if (!loading && gameStarted && countdown === 0 && timer > 0) {
             const interval = setInterval(() => setTimer((t) => t - 1), 1000);
             return () => clearInterval(interval);
         }
@@ -47,18 +46,37 @@ function BattleMode({ questionCount, timePerQuestion }: BattleModeProps) {
         if (timer === 0 && selectedAnswer === null && !isGameOver) {
             setIsGameOver(true);
         }
-    }, [timer, loading]);
+    }, [timer, loading, gameStarted, countdown]);
 
     useEffect(() => {
-        setTimer(timePerQuestion);
+        if (gameStarted && countdown === 0) {
+            setTimer(timePerQuestion);
+        }
         setSelectedAnswer(null);
-    }, [currentIndex]);
+    }, [currentIndex, countdown, gameStarted]);
 
-    function fetchQuestions() {
-        const transformedQuestions = transformQuestions(questionsData);
-        const selectedQuestions = getRandomQuestions(transformedQuestions, questionCount * 2);
-        setQuestions(selectedQuestions);
-        setLoading(false);
+    async function fetchQuestions() {
+        try {
+            setLoading(true);
+
+            const url = import.meta.env.VITE_QUESTIONS_URL;
+
+            const response = await fetch(url);
+
+            if (!response.ok) {
+                throw new Error("Error al obtener preguntas");
+            }
+
+            const data = await response.json();
+            const transformedQuestions = transformQuestions(data);
+            const selectedQuestions = getRandomQuestions(transformedQuestions, questionCount*2);
+
+            setQuestions(selectedQuestions);
+        } catch (error) {
+            console.error("Error en fetchQuestions:", error);
+        } finally {
+            setLoading(false);
+        }
     }
 
     function handleAnswer(answer: string) {
@@ -101,9 +119,9 @@ function BattleMode({ questionCount, timePerQuestion }: BattleModeProps) {
         }
     }
 
-    function restartGame() {
+    async function restartGame() {
         setLoading(true);
-        setQuestions([]);
+        await fetchQuestions();
         setCurrentIndex(0);
         setSelectedAnswer(null);
         setTimer(timePerQuestion);
@@ -153,7 +171,6 @@ function BattleMode({ questionCount, timePerQuestion }: BattleModeProps) {
 
     if (gameStarted && countdown > 0) {
         return <CountDown countdown={countdown.toString()} />;
-
     }
 
     if (loading) {

@@ -110,7 +110,7 @@ const EndGameScreen = ({
                         ⏱️ ¡Game Over!
                     </h2>
                     <p className="text-2xl mb-4">
-                        Se terminó el tiempo. {winner !== "Empate" && `¡${winner} gana por tiempo!`}
+                        Se terminó el tiempo. {player2 && winner !== "Empate" && `¡${winner} gana por tiempo!`}
                     </p>
                     {renderWinnerMessage()}
                     <p className="text-xl mb-2">

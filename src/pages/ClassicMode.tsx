@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
 import type { ClassicModeProps, Question } from "../types/gameTypes";
 import { getRandomQuestions, transformQuestions } from "../utils/utils";
-import { questionsData } from "../data";
 import QuestionCard from "../components/QuestionCard";
-import Button from "../components/Button";
 import EndGameScreen from "../components/EndGame";
 import Loader from "../components/Loader";
 import CountDown from "../components/CountDown";
+import Button from "../components/Button";
 
 function ClassicMode({ questionCount, timePerQuestion }: ClassicModeProps) {
     const [questions, setQuestions] = useState<Question[]>([]);
@@ -20,6 +19,7 @@ function ClassicMode({ questionCount, timePerQuestion }: ClassicModeProps) {
     const [playerName, setPlayerName] = useState<string>("");
     const [nameSubmitted, setNameSubmitted] = useState<boolean>(false);
     const [countdown, setCountdown] = useState<number | null>(null);
+    const [isGameStarted, setIsGameStarted] = useState(false);
 
     useEffect(() => {
         fetchQuestions();
@@ -37,27 +37,45 @@ function ClassicMode({ questionCount, timePerQuestion }: ClassicModeProps) {
     }, [countdown]);
 
     useEffect(() => {
-        if (!loading && timer > 0 && countdown === null) {
+        if (!loading && timer > 0 && countdown === null && isGameStarted) {
             const interval = setInterval(() => setTimer((t) => t - 1), 1000);
             return () => clearInterval(interval);
         }
 
-        if (timer === 0 && selectedAnswer === null && !isGameOver) {
+        if (timer === 0 && selectedAnswer === null && !isGameOver && isGameStarted) {
             setIsGameOver(true);
         }
-    }, [timer, loading, countdown]);
+    }, [timer, loading, countdown, isGameStarted]);
 
     useEffect(() => {
         setTimer(timePerQuestion);
         setSelectedAnswer(null);
     }, [currentIndex]);
 
-    function fetchQuestions() {
-        const transformedQuestions = transformQuestions(questionsData);
-        const selectedQuestions = getRandomQuestions(transformedQuestions, questionCount);
-        setQuestions(selectedQuestions);
-        setLoading(false);
+    async function fetchQuestions() {
+        try {
+            setLoading(true);
+
+            const url = import.meta.env.VITE_QUESTIONS_URL;
+
+            const response = await fetch(url || "");
+
+            if (!response.ok) {
+                throw new Error("Error al obtener preguntas");
+            }
+
+            const data = await response.json();
+            const transformedQuestions = transformQuestions(data);
+            const selectedQuestions = getRandomQuestions(transformedQuestions, questionCount);
+
+            setQuestions(selectedQuestions);
+        } catch (error) {
+            console.error("Error en fetchQuestions:", error);
+        } finally {
+            setLoading(false);
+        }
     }
+
 
     function handleAnswer(answer: string) {
         setSelectedAnswer(answer);
@@ -115,17 +133,21 @@ function ClassicMode({ questionCount, timePerQuestion }: ClassicModeProps) {
                     value={playerName}
                     onChange={(e) => setPlayerName(e.target.value)}
                 />
-                <button
-                    onClick={() => {
-                        if (playerName.trim() !== "") {
-                            setNameSubmitted(true);
-                            setCountdown(3);
-                        }
-                    }}
-                    className="bg-blue-600 px-6 py-3 rounded-lg hover:bg-blue-700 transition"
-                >
-                    Comenzar
-                </button>
+                <div className="mt-6 flex flex-col gap-2">
+                    <button
+                        onClick={() => {
+                            if (playerName.trim() !== "") {
+                                setNameSubmitted(true);
+                                setCountdown(3);
+                                setTimeout(() => setIsGameStarted(true), 3000);
+                            }
+                        }}
+                        className="w-full block px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-xl shadow-md hover:scale-105 transform transition duration-300 ease-in-out text-center"
+                    >
+                        Comenzar
+                    </button>
+                    <Button text="Volver al inicio" to="/" />
+                </div>
             </div>
         );
     }
