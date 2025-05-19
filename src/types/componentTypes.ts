@@ -33,4 +33,14 @@ interface CountDownProps {
     countdown: string;
 }
 
-export type { ButtonProps, QuestionCardProps, AnswerListProps, LoaderProps, CountDownProps };
+interface EndGameProps {
+    isFinished: boolean;
+    isGameOver: boolean;
+    player1: string;
+    player2?: string | null;
+    currentScoreP1: number;
+    currentScoreP2?: number | null;
+    restartGame: () => void;
+}
+
+export type { ButtonProps, QuestionCardProps, AnswerListProps, LoaderProps, CountDownProps, EndGameProps };

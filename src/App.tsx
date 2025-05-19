@@ -4,10 +4,10 @@ import ClassicMode from "./pages/ClassicMode.tsx";
 import BattleMode from "./pages/BattleMode.tsx";
 
 function App() {
-    const questionCount = 10;
-    const timePerQuestionClassic = 15;
-    const timePerQuestionBattle = 15;
-    const questionCountPerPlayer = 5;
+  const questionCount = 10;
+  const timePerQuestionClassic = 15;
+  const timePerQuestionBattle = 15;
+  const questionCountPerPlayer = 5;
 
   return (
     <Routes>

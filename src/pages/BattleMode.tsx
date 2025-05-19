@@ -69,7 +69,8 @@ function BattleMode({ questionCount, timePerQuestion }: BattleModeProps) {
 
             const data = await response.json();
             const transformedQuestions = transformQuestions(data);
-            const selectedQuestions = getRandomQuestions(transformedQuestions, questionCount*2);
+            const totalQuestions = questionCount * 2;
+            const selectedQuestions = getRandomQuestions(transformedQuestions, totalQuestions);
 
             setQuestions(selectedQuestions);
         } catch (error) {
@@ -87,8 +88,12 @@ function BattleMode({ questionCount, timePerQuestion }: BattleModeProps) {
         }, 1000);
     }
 
+    function isP1Turn() {
+        return currentIndex % 2 === 0;
+    }
+
     function increaseScore() {
-        if (currentIndex % 2 === 0) {
+        if (isP1Turn()) {
             setCurrentScoreP1((prev) => prev + 1);
         } else {
             setCurrentScoreP2((prev) => prev + 1);
@@ -96,7 +101,7 @@ function BattleMode({ questionCount, timePerQuestion }: BattleModeProps) {
     }
 
     function decreaseScore() {
-        if (currentIndex % 2 === 0) {
+        if (isP1Turn()) {
             setCurrentScoreP1((prev) => prev - 1);
         } else {
             setCurrentScoreP2((prev) => prev - 1);
@@ -104,7 +109,9 @@ function BattleMode({ questionCount, timePerQuestion }: BattleModeProps) {
     }
 
     function validateAnswer(answer: string) {
-        if (answer === questions[currentIndex].correctAnswer) {
+        const isCorrect = answer === questions[currentIndex].correctAnswer;
+
+        if (isCorrect) {
             increaseScore();
         } else {
             decreaseScore();
@@ -112,7 +119,8 @@ function BattleMode({ questionCount, timePerQuestion }: BattleModeProps) {
     }
 
     function handleNext() {
-        if (currentIndex < questions.length - 1) {
+        const isLastQuestion = currentIndex === questions.length - 1;
+        if (!isLastQuestion) {
             setCurrentIndex(currentIndex + 1);
         } else {
             setIsFinished(true);

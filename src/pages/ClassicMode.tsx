@@ -102,7 +102,9 @@ function ClassicMode({ questionCount, timePerQuestion }: ClassicModeProps) {
     }
 
     function handleNext() {
-        if (currentIndex < questions.length - 1) {
+        const isLastQuestion = currentIndex === questions.length - 1;
+
+        if (!isLastQuestion) {
             setCurrentIndex(currentIndex + 1);
         } else {
             setIsFinished(true);

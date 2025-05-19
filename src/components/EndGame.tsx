@@ -1,16 +1,7 @@
 import { useState, useEffect } from "react";
 import Confetti from "react-confetti";
 import Button from "./Button";
-
-interface Props {
-    isFinished: boolean;
-    isGameOver: boolean;
-    player1: string;
-    player2?: string | null;
-    currentScoreP1: number;
-    currentScoreP2?: number | null;
-    restartGame: () => void;
-}
+import type { EndGameProps } from "../types/componentTypes";
 
 const EndGameScreen = ({
     isFinished,
@@ -20,7 +11,7 @@ const EndGameScreen = ({
     currentScoreP1,
     currentScoreP2,
     restartGame,
-}: Props) => {
+}: EndGameProps) => {
     const [bestScore, setBestScore] = useState<number>(0);
     const [confettiActive, setConfettiActive] = useState(false);
 
