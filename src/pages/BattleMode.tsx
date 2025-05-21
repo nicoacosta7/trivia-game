@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import type { BattleModeProps, Question } from "../types/gameTypes";
-import { getRandomQuestions, transformQuestions } from "../utils/utils";
+import { getQuestions } from "../utils/utils";
 import Button from "../components/Button";
 import QuestionCard from "../components/QuestionCard";
 import EndGameScreen from "../components/EndGame";
@@ -43,7 +43,7 @@ function BattleMode({ questionCount, timePerQuestion }: BattleModeProps) {
             return () => clearInterval(interval);
         }
 
-        if (timer === 0 && selectedAnswer === null && !isGameOver) {
+        if (timer === 0 && !selectedAnswer && !isGameOver) {
             setIsGameOver(true);
         }
     }, [timer, loading, gameStarted, countdown]);
@@ -59,20 +59,13 @@ function BattleMode({ questionCount, timePerQuestion }: BattleModeProps) {
         try {
             setLoading(true);
 
-            const url = import.meta.env.VITE_QUESTIONS_URL;
-
-            const response = await fetch(url);
-
-            if (!response.ok) {
-                throw new Error("Error al obtener preguntas");
-            }
-
-            const data = await response.json();
-            const transformedQuestions = transformQuestions(data);
             const totalQuestions = questionCount * 2;
-            const selectedQuestions = getRandomQuestions(transformedQuestions, totalQuestions);
 
-            setQuestions(selectedQuestions);
+            const questions = await getQuestions(totalQuestions);
+
+            if (questions) {
+                setQuestions(questions);
+            }
         } catch (error) {
             console.error("Error en fetchQuestions:", error);
         } finally {
@@ -120,6 +113,7 @@ function BattleMode({ questionCount, timePerQuestion }: BattleModeProps) {
 
     function handleNext() {
         const isLastQuestion = currentIndex === questions.length - 1;
+
         if (!isLastQuestion) {
             setCurrentIndex(currentIndex + 1);
         } else {

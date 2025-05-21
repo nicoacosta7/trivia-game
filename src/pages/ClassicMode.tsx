@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import type { ClassicModeProps, Question } from "../types/gameTypes";
-import { getRandomQuestions, transformQuestions } from "../utils/utils";
+import { getQuestions } from "../utils/utils";
 import QuestionCard from "../components/QuestionCard";
 import EndGameScreen from "../components/EndGame";
 import Loader from "../components/Loader";
@@ -56,19 +56,11 @@ function ClassicMode({ questionCount, timePerQuestion }: ClassicModeProps) {
         try {
             setLoading(true);
 
-            const url = import.meta.env.VITE_QUESTIONS_URL;
+            const questions = await getQuestions(questionCount);
 
-            const response = await fetch(url || "");
-
-            if (!response.ok) {
-                throw new Error("Error al obtener preguntas");
+            if (questions) {
+                setQuestions(questions);
             }
-
-            const data = await response.json();
-            const transformedQuestions = transformQuestions(data);
-            const selectedQuestions = getRandomQuestions(transformedQuestions, questionCount);
-
-            setQuestions(selectedQuestions);
         } catch (error) {
             console.error("Error en fetchQuestions:", error);
         } finally {
@@ -94,7 +86,9 @@ function ClassicMode({ questionCount, timePerQuestion }: ClassicModeProps) {
     }
 
     function validateAnswer(answer: string) {
-        if (answer === questions[currentIndex].correctAnswer) {
+        const isCorrect = answer === questions[currentIndex].correctAnswer;
+
+        if (isCorrect) {
             increaseScore();
         } else {
             decreaseScore();
